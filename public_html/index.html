@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html lang="en">
+    <head>
+        <title>Bootstrap Example</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet"
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="http://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+
+        
+    </head>
+    <body>
+        <div class="container">
+            <h2>Vertical (basic) form</h2>
+            <div class="form-group">
+                <label for="name">name:</label>
+                <input type="text" class="form-control" id="name"
+                       placeholder="Enter student's Name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="email">email:</label>
+                <input type="email" class="form-control" id="email"
+                       placeholder="Enter student's Email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="class">class:</label>
+                <input type="text" class="form-control" id="class"
+                       placeholder="Enter student's class" name="class">
+            </div>
+            <div class="form-group">
+                <label for="school">school:</label>
+                <input type="text" class="form-control" id="school"
+                       placeholder="Enter student's school" name="school">
+            </div>
+
+            <input type="button" class="btn btn-primary" id="Save" value="Save"
+                   onclick="savestudent();">
+
+        </div>
+        <script>
+
+            function validateAndGetFormData() {
+
+                var nameVar = $("#name").val();
+                if (nameVar === "") {
+                    alert("student Name is Required!!");
+                    $("#nameame").focus();
+                    return "";
+                }
+                var emailVar = $("#email").val();
+                if (emailVar === "") {
+                    alert("student Email is Required!!");
+                    $("#email").focus();
+                    return "";
+                }
+                var classVar = $("#class").val();
+                if (classVar === "") {
+                    alert("student class is Required!!");
+                    $("#class").focus();
+                    return "";
+                }
+                var schoolVar = $("#school").val();
+                if (schoolVar === "") {
+                    alert("student school is Required!!");
+                    $("#school").focus();
+                    return "";
+                }
+                var jsonStrObj = {
+                    name: nameVar,
+                    email: emailVar,
+                    class: classVar,
+                    school: schoolVar,
+
+                };
+                return JSON.stringify(jsonStrObj);
+            }
+            
+            function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+                var url = dbBaseUrl + apiEndPointUrl;
+                var jsonObj;
+                $.post(url, reqString, function (result) {
+                    jsonObj = JSON.parse(result);
+                }).fail(function (result) {
+                    var dataJsonObj = result.responseText;
+                    jsonObj = JSON.parse(dataJsonObj);
+                });
+                return jsonObj;
+            }
+
+
+            function resetForm() {
+                $("#name").val("");
+                $("#email").val("");
+                $("#class").val("");
+                $("#school").val();
+
+            }
+
+            function savestudent() {
+                var jsonStr = validateAndGetFormData();
+                if (jsonStr === "") {
+                    return;
+                }
+                var putReqStr = createPUTRequest("90935350|-31948798563565122|90934487",
+                        jsonStr, "student", "skl-Rel");
+                alert(putReqStr);
+                jQuery.ajaxSetup({async: false});
+                var resultObj = executeCommand(putReqStr, "http://api.login2explore.com:5577", "/api/iml");
+                jQuery.ajaxSetup({async: true});
+
+                alert(JSON.stringify(resultObj));
+                resetForm();
+            }
+
+        </script>
+    </body>
+</html>
